@@ -12,7 +12,7 @@ spec:
     path: manifests/nfs
   destination: 
     server: https://kubernetes.default.svc
-    namespace: nfs-client-provisioner
+    namespace: nfs-provisioner
 
   syncPolicy:
     syncOptions:
