@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: traefik
+  project: default
+  source:
+    repoURL: 'https://helm.traefik.io/traefik'
+    chart: traefik
+    targetRevision: 10.24.1
+    #targetRevision: 20.8.0
+    helm:
+      values: |-
+        globalArguments:
+          - "--global.sendanonymoususage=false"
+          - "--global.checknewversion=false"
+
+        additionalArguments:
+          - "--certificatesresolvers.letsencrypt.acme.email=dinesh@deepfactor.io"
+          - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
+          - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+          - "--certificatesResolvers.letsencrypt.acme.dnschallenge=true"
+          - "--certificatesResolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
+          - "--api.insecure=true"
+          - "--accesslog=true"
+          - "--serversTransport.insecureSkipVerify=true"
+          - "--log.level=INFO"
+
+        env:
+          - name: CF_DNS_API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: cloudflare
+                key: dns-token
+
+        deployment:
+          enabled: true
+          replicas: 1
+          annotations: {}
+          podAnnotations: {}
+          additionalContainers: []
+          initContainers: []
+
+        ports:
+          web:
+            redirectTo: websecure
+          websecure:
+            tls:
+              enabled: true
+            
+        ingressRoute:
+          dashboard:
+            enabled: false
+
+        providers:
+          kubernetesCRD:
+            enabled: true
+            ingressClass: traefik
+          kubernetesIngress:
+            enabled: true
+            publishedService:
+              enabled: false
+
+        rbac:
+          enabled: true
+
+        service:
+          enabled: true
+          type: LoadBalancer
+          annotations: {}
+          labels: {}
+          spec:
+            loadBalancerIP: 192.168.1.50
+          loadBalancerSourceRanges: []
+          externalIPs: []
+
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
