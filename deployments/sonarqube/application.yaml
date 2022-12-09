@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sonarqube
+  namespace: argocd
+spec:
+  destination:
+    namespace: sonarqube
+    server: https://kubernetes.default.svc 
+  project: default
+  source:
+    repoURL: https://SonarSource.github.io/helm-chart-sonarqube
+    chart: sonarqube
+    targetRevision: 6.0.1+425
+    helm:
+      releaseName: sonarqube
+  syncPolicy:
+    automated: {}
+    syncOptions:
+    - CreateNamespace=true
