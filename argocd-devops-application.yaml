@@ -2,16 +2,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dev-devops
+  name: devops
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   labels:
-    name: dev-devops
+    name: devops
 spec:
   project: default
   source:
-    repoURL: https://github.com/deepfactor-field/gitops-deepfactor-dev
+    repoURL: https://github.com/dmancloud/gitops-devops-cluster.git
     targetRevision: HEAD
     path: deployments/
     directory:
@@ -19,7 +19,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: development
+    namespace: default
 
   syncPolicy:
     automated:
