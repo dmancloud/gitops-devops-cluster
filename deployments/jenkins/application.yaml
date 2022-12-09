@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: jenkins
+  name: nfs-provisioner
   namespace: argocd
 spec:
   project: default
@@ -9,10 +9,10 @@ spec:
   source:
     repoURL: https://github.com/dmancloud/gitops-devops-cluster.git
     targetRevision: HEAD
-    path: manifests/jenkins
+    path: manifests/nfs
   destination: 
     server: https://kubernetes.default.svc
-    namespace: jenkins
+    namespace: nfs-provisioner
 
   syncPolicy:
     syncOptions:
