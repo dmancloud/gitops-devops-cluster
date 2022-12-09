@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-provisioner
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/dmancloud/gitops-devops-cluster.git
+    targetRevision: HEAD
+    path: manifests/nfs
+  destination: 
+    server: https://kubernetes.default.svc
+    namespace: nfs-client-provisioner
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+
+    automated:
+      selfHeal: true
+      prune: true
+
